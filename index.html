@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BDA Design Versions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --accent: #1a237e;
+      --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px rgba(15, 23, 42, .06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 48px 24px 72px; }
+
+    header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 32px; }
+    .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+    h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 0; letter-spacing: -.02em; }
+    .lede { color: var(--muted); margin: 10px 0 0; max-width: 60ch; line-height: 1.5; }
+
+    .toggle { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
+    .toggle button {
+      font: inherit; font-size: 13px; font-weight: 600; color: var(--muted);
+      background: none; border: 0; padding: 8px 14px; border-radius: 7px; cursor: pointer;
+    }
+    .toggle button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 24px; }
+    .grid.mobile { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(15,23,42,.06), 0 16px 40px rgba(15,23,42,.10); }
+
+    /* Live preview: render the page at a real viewport width, then scale it down to fit */
+    .preview {
+      position: relative; display: block; overflow: hidden;
+      aspect-ratio: 16 / 10; background: #e9edf5; border-bottom: 1px solid var(--line);
+    }
+    .mobile .preview { aspect-ratio: 9 / 16; }
+    .preview iframe {
+      position: absolute; top: 0; left: 0; border: 0;
+      width: var(--vw); height: calc(var(--vw) * var(--ratio));
+      transform-origin: 0 0; transform: scale(var(--scale, .3));
+      pointer-events: none; background: #fff;
+    }
+    .preview::after {
+      content: "Open full page \2197"; position: absolute; inset: auto 12px 12px auto;
+      font-size: 12px; font-weight: 600; color: #fff; background: rgba(15,23,42,.8);
+      padding: 6px 10px; border-radius: 999px; opacity: 0; transition: opacity .2s;
+    }
+    .preview:hover::after, .preview:focus-visible::after { opacity: 1; }
+
+    .meta { padding: 20px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .tag { font-size: 12px; font-weight: 700; color: var(--accent); background: #e8eaf6; padding: 4px 10px; border-radius: 999px; }
+    .tag.latest { background: #dcfce7; color: #166534; }
+    .date { font-size: 12px; color: var(--muted); }
+    h2 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
+    .desc { font-size: 14px; color: var(--muted); line-height: 1.5; margin: 0; }
+    .headline { font-size: 13px; color: var(--ink); font-style: italic; margin: 0; }
+
+    .swatches { display: flex; gap: 6px; }
+    .swatches span { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(15,23,42,.1); }
+    .facts { display: flex; flex-wrap: wrap; gap: 6px; }
+    .facts li { list-style: none; font-size: 12px; color: var(--muted); background: #f1f5f9; padding: 4px 8px; border-radius: 6px; }
+    .facts { padding: 0; margin: 0; }
+
+    .actions { margin-top: auto; display: flex; gap: 8px; }
+    .btn {
+      flex: 1; text-align: center; text-decoration: none; font-size: 14px; font-weight: 600;
+      padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); color: var(--ink);
+    }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn:hover { filter: brightness(.95); }
+
+    footer { margin-top: 40px; font-size: 13px; color: var(--muted); text-align: center; }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 32px 16px 48px; }
+      .grid, .grid.mobile { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow">Bangalore Development Authority</p>
+        <h1>Website design versions</h1>
+        <p class="lede">Each card shows a live preview of one design direction for the BDA website. Click a preview to open that version full size.</p>
+      </div>
+      <div class="toggle" role="group" aria-label="Preview size">
+        <button type="button" data-mode="desktop" aria-pressed="true">Desktop</button>
+        <button type="button" data-mode="mobile" aria-pressed="false">Mobile</button>
+      </div>
+    </header>
+
+    <main class="grid" id="grid">
+      <article class="card">
+        <a class="preview" href="Website/index.html" target="_blank" rel="noopener" aria-label="Open Version 1">
+          <iframe src="Website/index.html" title="Version 1 preview" loading="lazy" tabindex="-1"></iframe>
+        </a>
+        <div class="meta">
+          <div class="row"><span class="tag">Version 1</span><span class="date">Updated 12 Oct 2026</span></div>
+          <h2>Classic Government Portal</h2>
+          <p class="headline">“Building a Better Bangalore, Together”</p>
+          <p class="desc">Deep-blue institutional look with a strong hero, service shortcuts and a structured information layout.</p>
+          <div class="swatches" aria-label="Palette">
+            <span style="background:#0b2b6b" title="#0b2b6b"></span>
+            <span style="background:#1a4ce6" title="#1a4ce6"></span>
+            <span style="background:#236eff" title="#236eff"></span>
+            <span style="background:#0f172a" title="#0f172a"></span>
+            <span style="background:#eff6ff" title="#eff6ff"></span>
+          </div>
+          <ul class="facts"><li>Inter</li><li>Blue / slate</li><li>Folder: Website</li></ul>
+          <div class="actions">
+            <a class="btn primary" href="Website/index.html" target="_blank" rel="noopener">Open design</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="preview" href="website-v2/index.html" target="_blank" rel="noopener" aria-label="Open Version 2">
+          <iframe src="website-v2/index.html" title="Version 2 preview" loading="lazy" tabindex="-1"></iframe>
+        </a>
+        <div class="meta">
+          <div class="row"><span class="tag">Version 2</span><span class="date">Updated 9 Oct 2026</span></div>
+          <h2>Bilingual Civic Navy</h2>
+          <p class="headline">“Planning the city with homes.”</p>
+          <p class="desc">Official BDA navy with amber accents, English / Kannada toggle and a rotating hero headline.</p>
+          <div class="swatches" aria-label="Palette">
+            <span style="background:#1a237e" title="#1a237e"></span>
+            <span style="background:#0e1630" title="#0e1630"></span>
+            <span style="background:#ffb020" title="#ffb020"></span>
+            <span style="background:#18a058" title="#18a058"></span>
+            <span style="background:#eef1f7" title="#eef1f7"></span>
+          </div>
+          <ul class="facts"><li>Inter + Noto Sans Kannada</li><li>EN / ಕನ್ನಡ</li><li>Folder: website-v2</li></ul>
+          <div class="actions">
+            <a class="btn primary" href="website-v2/index.html" target="_blank" rel="noopener">Open design</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="preview" href="website-v3/index.html" target="_blank" rel="noopener" aria-label="Open Version 3">
+          <iframe src="website-v3/index.html" title="Version 3 preview" loading="lazy" tabindex="-1"></iframe>
+        </a>
+        <div class="meta">
+          <div class="row"><span class="tag latest">Version 3 · Latest</span><span class="date">Updated 12 Oct 2026</span></div>
+          <h2>Modern Glass</h2>
+          <p class="headline">“Designing the Future of Bangalore”</p>
+          <p class="desc">Light, airy layout with a glass navigation bar, bright blue primary and department cards.</p>
+          <div class="swatches" aria-label="Palette">
+            <span style="background:#1978e5" title="#1978e5"></span>
+            <span style="background:#007aff" title="#007aff"></span>
+            <span style="background:#1e293b" title="#1e293b"></span>
+            <span style="background:#dbeafe" title="#dbeafe"></span>
+            <span style="background:#edf2fc" title="#edf2fc"></span>
+          </div>
+          <ul class="facts"><li>Inter</li><li>Glass nav</li><li>Folder: website-v3</li></ul>
+          <div class="actions">
+            <a class="btn primary" href="website-v3/index.html" target="_blank" rel="noopener">Open design</a>
+          </div>
+        </div>
+      </article>
+    </main>
+
+    <footer>BDA website redesign · design exploration</footer>
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const modes = { desktop: { vw: 1440, ratio: 10 / 16 }, mobile: { vw: 390, ratio: 16 / 9 } };
+    let mode = 'desktop';
+
+    function fit() {
+      const { vw, ratio } = modes[mode];
+      document.querySelectorAll('.preview').forEach(p => {
+        p.style.setProperty('--vw', vw + 'px');
+        p.style.setProperty('--ratio', ratio);
+        p.style.setProperty('--scale', p.clientWidth / vw);
+      });
+    }
+
+    document.querySelectorAll('.toggle button').forEach(b => b.addEventListener('click', () => {
+      mode = b.dataset.mode;
+      document.querySelectorAll('.toggle button').forEach(x => x.setAttribute('aria-pressed', x === b));
+      grid.classList.toggle('mobile', mode === 'mobile');
+      fit();
+    }));
+
+    new ResizeObserver(fit).observe(grid);
+    fit();
+  </script>
+</body>
+</html>
